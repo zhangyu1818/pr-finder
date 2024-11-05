@@ -10,7 +10,7 @@ This tool allows you to query Pull Requests (PRs) from a GitHub repository based
 
 ### Installation
 
-1. Download the binary package for your platform from the [Releases](/releases) section.
+1. Download the binary package for your platform from the [Releases](https://github.com/zhangyu1818/pr-finder/releases) section.
 2. Ensure the binary is executable:
 
 ```bash
