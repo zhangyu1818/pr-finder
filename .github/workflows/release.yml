@@ -1,4 +1,4 @@
-name: Build and Distribute Bun Executables
+name: Build and Distribute Rust Executables
 
 on:
   push:
@@ -10,56 +10,65 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Compile Bun Executable
+  build-linux:
+    name: Compile Rust Executable
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          # Linux
-          - platform: bun-linux-x64
-            extension: ''
-          - platform: bun-linux-x64-baseline
-            extension: ''
-          - platform: bun-linux-x64-modern
-            extension: ''
-          - platform: bun-linux-arm64
-            extension: ''
-          # macOS
-          - platform: bun-darwin-x64
-            extension: ''
-          - platform: bun-darwin-x64-baseline
-            extension: ''
-          - platform: bun-darwin-x64-modern
-            extension: ''
-          - platform: bun-darwin-arm64
-            extension: ''
-          # Windows
-          - platform: bun-windows-x64
-            extension: '.exe'
-          - platform: bun-windows-x64-baseline
-            extension: '.exe'
-          - platform: bun-windows-x64-modern
-            extension: '.exe'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Install dependencies
-        run: |
-          bun install
+      - name: Build for target
+        run: cargo build --release
 
-      - name: Compile with Bun
-        run: |
-          bun build --compile --minify --bytecode ./index.ts --target=${{ matrix.platform }} --outfile pr-finder-${{ matrix.platform }}${{ matrix.extension }}
+      - name: rename
+        run: mv target/release/pr-finder target/release/pr-finder-linux
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: pr-finder-${{ matrix.platform }}${{ matrix.extension }}
+          files: target/release/pr-finder-linux
+
+  build-macos:
+    name: Compile Rust Executable
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Build for target
+        run: cargo build --release
+
+      - name: rename
+        run: mv target/release/pr-finder target/release/pr-finder-macos
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/pr-finder-macos
+        
+  build-windows:
+    name: Compile Rust Executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Build for target
+        run: cargo build --release
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/pr-finder.exe

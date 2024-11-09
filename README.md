@@ -4,7 +4,7 @@
 
 This tool allows you to query Pull Requests (PRs) from a GitHub repository based on various filters, such as author, status, date range, and more. It uses the GitHub GraphQL API to retrieve and display the requested information in a formatted output.
 
-> This tool was initially written in TypeScript and compiled into a binary using Bun. However, the compiled output was extremely large (over 100MB). After rewriting it in Rust, the binary size was reduced to just 2MB.
+> This tool was initially written in TypeScript([branch](https://github.com/zhangyu1818/pr-finder/tree/typescript)) and compiled into a binary using Bun. However, the compiled output was extremely large (over 100MB). After rewriting it in Rust, the binary size was reduced to just 2MB.
 
 ## How to Use
 
