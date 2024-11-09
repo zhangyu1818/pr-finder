@@ -1,0 +1,65 @@
+name: Build and Distribute Bun Executables
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Compile Bun Executable
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # Linux
+          - platform: bun-linux-x64
+            extension: ''
+          - platform: bun-linux-x64-baseline
+            extension: ''
+          - platform: bun-linux-x64-modern
+            extension: ''
+          - platform: bun-linux-arm64
+            extension: ''
+          # macOS
+          - platform: bun-darwin-x64
+            extension: ''
+          - platform: bun-darwin-x64-baseline
+            extension: ''
+          - platform: bun-darwin-x64-modern
+            extension: ''
+          - platform: bun-darwin-arm64
+            extension: ''
+          # Windows
+          - platform: bun-windows-x64
+            extension: '.exe'
+          - platform: bun-windows-x64-baseline
+            extension: '.exe'
+          - platform: bun-windows-x64-modern
+            extension: '.exe'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: |
+          bun install
+
+      - name: Compile with Bun
+        run: |
+          bun build --compile --minify --bytecode ./index.ts --target=${{ matrix.platform }} --outfile pr-finder-${{ matrix.platform }}${{ matrix.extension }}
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pr-finder-${{ matrix.platform }}${{ matrix.extension }}

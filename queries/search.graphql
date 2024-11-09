@@ -1,0 +1,16 @@
+query Query($query: String!, $cursor: String) {
+  search(query: $query, type: ISSUE, first: 100, after: $cursor) {
+    nodes {
+      __typename
+      ... on PullRequest {
+        number
+        title
+        createdAt
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
