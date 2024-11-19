@@ -13,3 +13,7 @@ serde = "1.0.214"
 
 [profile.release]
 panic = "abort"
+strip = true
+codegen-units = 1
+lto = true
+opt-level = "z"
